@@ -14,4 +14,4 @@ export TEST_DATA=input/test_cat.csv
 #FOLD=2 python -m src.train
 #FOLD=3 python -m src.train
 #FOLD=4 python -m src.train
-python -m src.train_qna_kb
+python -m src.predict_qna_kb $1 $2
