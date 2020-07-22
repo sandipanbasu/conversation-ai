@@ -16,5 +16,6 @@ if __name__ == "__main__":
     if len(opts) == 0 and len(opts) > 1:
       print ('usage: predict_qna_kb.py -q <query>')  
     question = opts[0][1]
-    ans = utils_qna_kb.askfaq(question)
+    utils = utils_qna_kb.UtilsQnAFAQ()
+    ans = utils.askfaq(question,num_results=1)
     print(ans)
