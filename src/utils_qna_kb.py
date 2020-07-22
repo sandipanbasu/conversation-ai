@@ -7,7 +7,7 @@ import simpleneighbors
 import urllib
 import pandas as pd
 import numpy as np
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 import tensorflow_hub as hub
 import tensorflow as tf
 import joblib
@@ -33,7 +33,7 @@ class UtilsQnAFAQ:
 
 
     def load_data(self, path='../data/faq.csv', sep="##,##"):
-        print('Loading data....')
+        print('Loading data from',path)
         self.data = pd.read_csv(path, sep=sep, engine='python')
         print('...... done')
         print('Data @head 2')
@@ -105,8 +105,12 @@ class UtilsQnAFAQ:
         self.index = simpleneighbors.SimpleNeighbors.load(index_path)
         print('Loaded',self.index.__len__(),'sentences in Annoy Index')
 
-    def train_faq_kb(self, data_csv_path, USE_path, faq_train_batch_size):
+    def train_faq_kb(self, data_csv_path, USE_path='', faq_train_batch_size=''):
         print('FAQ KB Training started...')
+        if(USE_path == ''):
+            USE_path = self.USE_MODEL
+        if(faq_train_batch_size == ''):
+            faq_train_batch_size = self.FAQ_TRAIN_BATCH_SIZE
         self.load_data(data_csv_path)
         self.load_USE_model(USE_path)
         # extract_questions(data)
@@ -114,7 +118,7 @@ class UtilsQnAFAQ:
         print('Dumping sentence dict ...')
         joblib.dump(self.sentence_dict, f"{self.MODEL_ARTIFACTS}/sentence_dict.pkl")
         print('FAQ KB Training completed ...')
-        # return sentence_dict
+        return len(self.sentence_dict)
 
     def askfaq(self, question, num_results=5):
         if (self.model == None):
@@ -125,7 +129,7 @@ class UtilsQnAFAQ:
 
         results = self.get_nearest(question, num_results=num_results)
         print('results = ',results)
-        ans = pd.DataFrame(columns=['original_q','answer','matched_line','confidence'])        
+        ans = pd.DataFrame(columns=['original_q','answer','matched_line','confidence'])             
         for result in results:
             print(result, ans[ans['answer'] == self.sentence_dict[result]].size)
             if(ans[ans['answer'] == self.sentence_dict[result]].size == 0):
@@ -133,12 +137,15 @@ class UtilsQnAFAQ:
                 zipped = zip(ans.columns, values)    
                 a_dictionary = dict(zipped)
                 ans = ans.append(a_dictionary,ignore_index=True)  
-        return ans
+        return ans.to_json(orient ='records')
 
     def save(self):       
         with open(self.MODEL_ARTIFACTS + "util-qna-faq-data.pkl", "wb") as fh:
             pickle.dump(self, fh)        
 
+_inst = UtilsQnAFAQ()
+train = _inst.train_faq_kb
+ask = _inst.askfaq
 
 if __name__ == "__main__":
     print('load util')
