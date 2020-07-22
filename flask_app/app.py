@@ -6,20 +6,15 @@ import os
 from utils_qna_kb import train, ask
 
 server = Flask(__name__)
-print(sys.path)
 FAQ_TRAIN_FOLDER = os.environ.get("FAQ_TRAIN_FOLDER")
-
-def run_request():
-    index = int(request.json['index'])
-    list = ['red', 'green', 'blue', 'yellow', 'black']
-    return list[index]
+print(FAQ_TRAIN_FOLDER)
 
 @server.route('/', methods=['GET', 'POST'])
 def hello_world():
     if request.method == 'GET':
-        return 'The model is up and running. Send a POST request'
+        return 'The epitome of non-sense '
     else:
-        return run_request()
+        return 'The epitome of non-sense'
 
 @server.route('/train_faq', methods=['GET', 'POST'])
 def train_faq():
@@ -44,6 +39,4 @@ def infer_faq():
         # if(size == 0):
         #     size = 1        
         ans = ask(query,3)
-        return Response(ans, mimetype='application/json')
-    else:
-        return run_request()            
+        return Response(ans, mimetype='application/json')         

@@ -7,13 +7,21 @@ services:
     build: ./flask_app
     ports:
       - "8000:8000"
-    command: gunicorn -w 1 -b 0.0.0.0:8000 wsgi:server
+    environment:      
+      - FAQ_TRAINING_DATA=/opt/convai/data/faq.csv
+      - USE_MODEL=/opt/convai/model/
+      - FAQ_INDEX_PATH=/opt/convai/index/faq.ann
+      - FAQ_TRAIN_BATCH_SIZE="10"
+      - MODEL_ARTIFACTS=/opt/convai/model-artifacts
+      - FAQ_TRAIN_FOLDER=/opt/convai/uploads
+      - PYTHONPATH=/opt/convai/src;$PYTHONPATH
+    command: gunicorn -w 1 -b 0.0.0.0:8000 --log-file=/opt/convai/logs/gunicorn.log wsgi:server
 
-  nginx:
-    container_name: nginx
-    restart: always
-    build: ./nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - flask_app
+  # nginx:
+  #   container_name: nginx
+  #   restart: always
+  #   build: ./nginx
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - flask_app
