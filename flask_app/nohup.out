@@ -5,3 +5,46 @@
 2020-07-22 14:02:35.319777: I tensorflow/core/platform/profile_utils/cpu_utils.cc:102] CPU Frequency: 2199995000 Hz
 2020-07-22 14:02:35.320335: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x5565b381f450 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
 2020-07-22 14:02:35.320364: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version
+2020-07-23 11:03:55.193798: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda/lib64:/usr/local/nccl2/lib:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda/lib64:/usr/local/nccl2/lib:/usr/local/cuda/extras/CUPTI/lib64
+2020-07-23 11:03:55.193883: E tensorflow/stream_executor/cuda/cuda_driver.cc:313] failed call to cuInit: UNKNOWN ERROR (303)
+2020-07-23 11:03:55.193913: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (tensorflow-2-2-20200719-223942): /proc/driver/nvidia/version does not exist
+2020-07-23 11:03:55.194310: I tensorflow/core/platform/cpu_feature_guard.cc:143] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2020-07-23 11:03:55.452755: I tensorflow/core/platform/profile_utils/cpu_utils.cc:102] CPU Frequency: 2200000000 Hz
+2020-07-23 11:03:55.453214: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55658970cb00 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
+2020-07-23 11:03:55.453264: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version
+[nltk_data] Downloading package punkt to /home/sandipan/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+/home/sandipan/projects/uploads
+Loading Universal Sentence Encoder from /home/sandipan/projects/model/
+2020-07-23 11:13:10.845566: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda/lib64:/usr/local/nccl2/lib:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda/lib64:/usr/local/nccl2/lib:/usr/local/cuda/extras/CUPTI/lib64
+2020-07-23 11:13:10.845655: E tensorflow/stream_executor/cuda/cuda_driver.cc:313] failed call to cuInit: UNKNOWN ERROR (303)
+2020-07-23 11:13:10.845695: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (tensorflow-2-2-20200719-223942): /proc/driver/nvidia/version does not exist
+2020-07-23 11:13:10.847838: I tensorflow/core/platform/cpu_feature_guard.cc:143] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2020-07-23 11:13:10.856112: I tensorflow/core/platform/profile_utils/cpu_utils.cc:102] CPU Frequency: 2200000000 Hz
+2020-07-23 11:13:10.856431: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55658970d5d0 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
+2020-07-23 11:13:10.856494: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version
+[nltk_data] Downloading package punkt to /home/sandipan/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+/home/sandipan/projects/uploads
+Loading Universal Sentence Encoder from /home/sandipan/projects/model/
+Universal Sentence Encoder model from in mem <tensorflow.python.saved_model.load.Loader._recreate_base_user_object.<locals>._UserObject object at 0x7fc6a68a6210>
+Start to load index from /home/sandipan/projects/index/faq.ann
+Loaded 30 sentences in Annoy Index
+Searching in  30 sentences in Annoy Index
+results =  ['Does Coastal charge a fee to receive Foreign Wire Transfers of Funds?', 'When I use Popmoney when will the recipient receive the funds?', 'National Electronic Funds Transfer or NEFT is an electronic funds transfer system maintained by the Reserve Bank of India.']
+Does Coastal charge a fee to receive Foreign Wire Transfers of Funds? 0
+When I use Popmoney when will the recipient receive the funds? 0
+National Electronic Funds Transfer or NEFT is an electronic funds transfer system maintained by the Reserve Bank of India. 0
+Exception ignored in: <function CapturableResourceDeleter.__del__ at 0x7fc6f87217a0>
+Traceback (most recent call last):
+  File "/opt/conda/envs/env_2/lib/python3.7/site-packages/tensorflow/python/training/tracking/tracking.py", line 190, in __del__
+  File "/opt/conda/envs/env_2/lib/python3.7/site-packages/tensorflow/python/eager/context.py", line 1892, in eager_mode
+  File "/opt/conda/envs/env_2/lib/python3.7/contextlib.py", line 239, in helper
+TypeError: 'NoneType' object is not callable
+2020-07-23 11:15:36.739074: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/cuda/lib64:/usr/local/nccl2/lib:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda/lib64:/usr/local/nccl2/lib:/usr/local/cuda/extras/CUPTI/lib64
+2020-07-23 11:15:36.739158: E tensorflow/stream_executor/cuda/cuda_driver.cc:313] failed call to cuInit: UNKNOWN ERROR (303)
+2020-07-23 11:15:36.739190: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (tensorflow-2-2-20200719-223942): /proc/driver/nvidia/version does not exist
+2020-07-23 11:15:36.739472: I tensorflow/core/platform/cpu_feature_guard.cc:143] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2020-07-23 11:15:36.747283: I tensorflow/core/platform/profile_utils/cpu_utils.cc:102] CPU Frequency: 2200000000 Hz
+2020-07-23 11:15:36.747625: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x561875b851d0 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
+2020-07-23 11:15:36.747667: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version

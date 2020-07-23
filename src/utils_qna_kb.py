@@ -27,7 +27,7 @@ class UtilsQnAFAQ:
         self.MODEL_ARTIFACTS = os.environ.get("MODEL_ARTIFACTS")
         self.FAQ_TRAINING_DATA = os.environ.get("FAQ_TRAINING_DATA")
         self.USE_MODEL = os.environ.get("USE_MODEL")
-        self.FAQ_INDdocEX_PATH = os.environ.get("FAQ_INDEX_PATH")
+        self.FAQ_INDEX_PATH = os.environ.get("FAQ_INDEX_PATH")
         self.FAQ_TRAIN_BATCH_SIZE = 10
         self.sentence_dict = {}        
 
