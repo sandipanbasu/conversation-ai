@@ -50,10 +50,10 @@ class UtilsQnAFAQ:
         return list(set(all_sentences))  # remove duplicates
 
 
-    def extract_questions(self):
-        for item, row in self.data.iterrows():
-            questions.append((row['question'], row['answer']))
-        return list(set(questions))
+    # def extract_questions(self):
+    #     for item, row in self.data.iterrows():
+    #         questions.append((row['question'], row['answer']))
+    #     return list(set(questions))
 
 
     def get_nearest(self, query_text, num_results=10):
