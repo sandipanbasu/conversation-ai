@@ -18,16 +18,15 @@ nltk.download('punkt')
 
 class UtilsQnAFAQ:
 
-    def __init__(self):
+    def __init__(self, home_path):
         self.questions = []
         # Create the global index object
         self.index = simpleneighbors.SimpleNeighbors(512, metric='angular')
         self.data = pd.DataFrame()
-        self.model = None
-        self.MODEL_ARTIFACTS = os.environ.get("MODEL_ARTIFACTS")
-        self.FAQ_TRAINING_DATA = os.environ.get("FAQ_TRAINING_DATA")
-        self.USE_MODEL = os.environ.get("USE_MODEL")
-        self.FAQ_INDEX_PATH = os.environ.get("FAQ_INDEX_PATH")
+        self.model = None        
+        self.MODEL_ARTIFACTS = os.path.join(home_path, "faq")
+        self.USE_MODEL = os.path.join(home_path, "USE", "model")
+        self.FAQ_INDEX_PATH = os.path.join(home_path, "faq", "ann_index")
         self.FAQ_TRAIN_BATCH_SIZE = 10
         self.sentence_dict = {}        
 
@@ -114,7 +113,7 @@ class UtilsQnAFAQ:
         self.load_data(data_csv_path)
         self.load_USE_model(USE_path)
         # extract_questions(data)
-        self.build_search_index(batch_size=faq_train_batch_size)
+        self.build_search_index(index_path=self.FAQ_INDEX_PATH, batch_size=faq_train_batch_size)
         print('Dumping sentence dict ...')
         joblib.dump(self.sentence_dict, f"{self.MODEL_ARTIFACTS}/sentence_dict.pkl")
         print('FAQ KB Training completed ...')
@@ -137,13 +136,14 @@ class UtilsQnAFAQ:
                 zipped = zip(ans.columns, values)    
                 a_dictionary = dict(zipped)
                 ans = ans.append(a_dictionary,ignore_index=True)  
-        return ans.to_json(orient ='records')
+        return ans.to_dict(orient ='records')
 
     def save(self):       
         with open(self.MODEL_ARTIFACTS + "util-qna-faq-data.pkl", "wb") as fh:
-            pickle.dump(self, fh)        
+            pickle.dump(self, fh)
 
-_inst = UtilsQnAFAQ()
+CONVAI_HOME = os.environ.get("CONVAI_HOME")
+_inst = UtilsQnAFAQ(CONVAI_HOME)
 train = _inst.train_faq_kb
 ask = _inst.askfaq
 
