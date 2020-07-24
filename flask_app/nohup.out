@@ -48,3 +48,5 @@ TypeError: 'NoneType' object is not callable
 2020-07-23 11:15:36.747283: I tensorflow/core/platform/profile_utils/cpu_utils.cc:102] CPU Frequency: 2200000000 Hz
 2020-07-23 11:15:36.747625: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x561875b851d0 initialized for platform Host (this does not guarantee that XLA will be used). Devices:
 2020-07-23 11:15:36.747667: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version
+[nltk_data] Downloading package punkt to /home/sandipan/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
