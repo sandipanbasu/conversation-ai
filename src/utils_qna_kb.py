@@ -23,16 +23,17 @@ class UtilsQnAFAQ:
         self.questions = []
         # Create the global index object
         self.dims = 512
-        self.metric = 'angular'        
+        self.metric = 'manhattan'        
         self.index = AnnoyIndex(self.dims, metric=self.metric)
         self.data = pd.DataFrame()
-        self.model = None        
+        self.model = None
         self.corpus = []
         self.id_map = {}
         self.i = 0
+        self.n_trees = 10
         self.built = False
         self.MODEL_ARTIFACTS = os.path.join(home_path, "faq")
-        self.USE_MODEL = os.path.join(home_path, "USE", "model")
+        self.USE_MODEL = os.path.join(home_path, "USE", "model-4")
         self.FAQ_INDEX_PATH = os.path.join(home_path, "faq", "ann_index","faq.ann")
         self.FAQ_TRAIN_BATCH_SIZE = 10
         self.sentence_dict = {} 
@@ -96,8 +97,10 @@ class UtilsQnAFAQ:
 
 
     def get_nearest(self, query_text, num_results=10):
-        query_embedding = self.model.signatures['question_encoder'](
-            tf.constant([query_text]))['outputs'][0]            
+        # query_embedding = self.model.signatures['question_encoder'](
+        #     tf.constant([query_text]))['outputs'][0]     
+        query_embedding = self.model([query_text])[0]
+           
     
         if(self.__index_len__() == 0):            
             self.loadindex(self.FAQ_INDEX_PATH)
@@ -105,9 +108,11 @@ class UtilsQnAFAQ:
         print('Searching in ',self.__index_len__(),'sentences in Annoy Index')
 
         search_results = []
-        nns = self.index.get_nns_by_vector(query_embedding, num_results, include_distances=True)        
-        for j in range(len(nns[0])):
-            search_results.append([self.corpus[nns[0][j]],nns[1][j]])       
+        nns = self.index.get_nns_by_vector(query_embedding, num_results, include_distances=True)
+        for j in range(len(nns[0])):            
+            item_emb = self.index.get_item_vector(nns[0][j])
+            corr = np.inner(query_embedding,item_emb)
+            search_results.append([self.corpus[nns[0][j]],float(format(nns[1][j], '.2f')), float(format(corr, '.2f'))])       
         return search_results
 
 
@@ -119,25 +124,33 @@ class UtilsQnAFAQ:
 
     def build_search_index(self, index_path, batch_size=10):
         sentences = self.extract_sentences_from_answer()
-        encodings = self.model.signatures['response_encoder'](
-            input=tf.constant([sentences[0][0]]),
-            context=tf.constant([sentences[0][1]]))
+        ## IN CASE WE USE MODEL 3 for QA
+        # encodings = self.model.signatures['response_encoder'](
+        #     input=tf.constant([sentences[0][0]]),
+        #     context=tf.constant([sentences[0][1]]))
+        # encodings = self.model()
+
         print('Computing embeddings for %s sentences' % len(sentences))
         slices = zip(*(iter(sentences),) * batch_size)
         num_batches = int(len(sentences) / batch_size)
         print('Batch wise index add...')
         for s in tqdm(slices, total=num_batches):
             response_batch = list([r for r, c in s])
-            context_batch = list([c for r, c in s])
-            encodings = self.model.signatures['response_encoder'](
-                                                input=tf.constant(response_batch),
-                                                context=tf.constant(context_batch)
-                                            )
+            # context_batch = list([c for r, c in s])
+            # encodings = self.model.signatures['response_encoder'](
+            #                                     input=tf.constant(response_batch),
+            #                                     context=tf.constant(context_batch)
+            #                                 )
+            encodings = self.model(response_batch)
+            # print(response_batch)
+            # print(encodings)
+
             for batch_index, batch in enumerate(response_batch):
-                self.add_one(batch, encodings['outputs'][batch_index])
+                self.add_one(batch, encodings[batch_index])
+                # print(batch_index, batch)
 
         print('Building Index...')
-        self.index.build(30) # 30 Trees
+        self.index.build(self.n_trees) # 10 Trees def
         self.built = True
         self.sentence_dict = dict(sentences)
         print('Saving Index...')
@@ -185,28 +198,33 @@ class UtilsQnAFAQ:
         print('FAQ KB Training completed ...')
         return len(self.sentence_dict)
 
-    def askfaq(self, question, num_results=5):
+    def askfaq(self, question, corr_threshold=0.5,distance_threshold=10, num_results=5):
         if (self.model == None):
             self.load_USE_model(self.USE_MODEL)
 
         results = self.get_nearest(question, num_results=num_results)
-        print('results = ',results)
-        ans = pd.DataFrame(columns=['original_q','answer','matched_line','confidence'])             
+        ans = pd.DataFrame(columns=['original_q','answer','matched_line','distance','corr'])             
         for result in results:
-            print('each res', result,result[0],result[1])
+            print('each res', result)
             matched_line = result[0]
-            confi = result[1]
-            print(result, ans[ans['answer'] == self.sentence_dict[matched_line]].size)
+            distance = result[1]
+            corr = result[2]
+            # match for minimum threshholds
+            if ((distance > distance_threshold) or (corr < corr_threshold)):
+                continue
+            
             if(ans[ans['answer'] == self.sentence_dict[matched_line]].size == 0):
-                values = ['',self.sentence_dict[matched_line],matched_line,confi]
+                values = ['',self.sentence_dict[matched_line],matched_line,distance,corr]
                 zipped = zip(ans.columns, values)    
                 a_dictionary = dict(zipped)
                 ans = ans.append(a_dictionary,ignore_index=True)
             else:
-                print('answer already added, found a new higher confidence of', confi, '>',
-                      ans[ans['answer'] == self.sentence_dict[matched_line]]['confidence'].iloc[0])
-                if (confi > ans[ans['answer'] == self.sentence_dict[matched_line]]['confidence'].iloc[0]):
-                    ans[ans['answer'] == self.sentence_dict[matched_line]]['confidence'].iloc[0] = confi
+                print('answer already added, found a new higher confidence of', distance, '>',
+                      ans[ans['answer'] == self.sentence_dict[matched_line]]['distance'].iloc[0])
+                if (distance < ans[ans['answer'] == self.sentence_dict[matched_line]]['distance'].iloc[0]):
+                    ans[ans['answer'] == self.sentence_dict[matched_line]]['distance'].iloc[0] = distance
+                if (corr > ans[ans['answer'] == self.sentence_dict[matched_line]]['corr'].iloc[0]):
+                    ans[ans['answer'] == self.sentence_dict[matched_line]]['corr'].iloc[0] = corr
         return ans.to_dict(orient ='records')
 
 

@@ -3,4 +3,4 @@ export PYTHONPATH=$PYTHONPATH:/home/sandipan/projects/conversation-ai/src
 
 cd fastapi
 
-nohup uvicorn --reload --workers 1 --host 0.0.0.0 --port 8000 app:app & 
+nohup uvicorn --workers 2 --host 0.0.0.0 --port 8000 app:app & 

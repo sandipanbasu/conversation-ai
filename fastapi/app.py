@@ -61,10 +61,12 @@ async def train_faq(file: UploadFile = File(...)):
 
 
 @app.get('/ask')
-async def infer_faq(q: str, size: Optional[int] = 3):  
-    ans = ask(q,size)
-    print(type(ans))
-    return ans
+async def infer_faq(q: str,corr: Optional[float]=0.5, distance: Optional[int]=10, size: Optional[int] = 3):  
+    ans = ask(q,corr_threshold=corr, distance_threshold=distance, num_results=size)
+    if(len(ans) > 0):
+        return ans
+    else:
+        return {"No answer found"}
 
 @app.on_event("shutdown")
 async def cleanup():
