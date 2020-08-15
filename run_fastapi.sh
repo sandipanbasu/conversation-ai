@@ -1,5 +1,5 @@
-export CONVAI_HOME=/home/sandipan/projects/convai
-export PYTHONPATH=$PYTHONPATH:/home/sandipan/projects/conversation-ai/src
+export CONVAI_HOME=/Users/sandipanbasu/projects/convai
+export PYTHONPATH=$PYTHONPATH:/Users/sandipanbasu/projects/conversation-ai/src
 
 cd fastapi
 
