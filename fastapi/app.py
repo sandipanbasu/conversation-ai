@@ -1,10 +1,13 @@
-from fastapi import FastAPI, File, UploadFile, Request
+from fastapi import FastAPI, File, UploadFile, Request, Form, Response
 from aiohttp import ClientSession
 from typing import Optional
 import sys
 import os
 import time
 from utils_qna_kb import train, ask
+
+from twilio.twiml.messaging_response import MessagingResponse
+
 
 from schemas import (
     TrainFaqResponseBody,
@@ -67,7 +70,26 @@ async def infer_faq(q: str,corr: Optional[float]=0.5, distance: Optional[int]=10
         return ans
     else:
         return {"No answer found"}
-
+    
+@app.post('/whatsapp')
+async def whatapp(Body: str = Form(...)):  
+    # body = b''
+    # async for chunk in request.stream():
+    #     body += chunk    
+    print (Body)
+    # Start our TwiML response
+    resp = MessagingResponse()
+    ans = ask(Body,corr_threshold=.4, distance_threshold=20, num_results=3) 
+    direct_answer = ""
+    try:    
+        direct_answer = ans[0]['answer']    
+    except:    
+        direct_answer = "We are working hard to get you the answer !!"
+    resp.message(direct_answer)
+    return Response(content=str(resp), media_type="application/xml")    
+    
+        
+    
 @app.on_event("shutdown")
 async def cleanup():
     await client_session.close()        
