@@ -226,12 +226,22 @@ class UtilsQnAFAQ:
                 if (corr > ans[ans['answer'] == self.sentence_dict[matched_line]]['corr'].iloc[0]):
                     ans[ans['answer'] == self.sentence_dict[matched_line]]['corr'].iloc[0] = corr
         return ans.to_dict(orient ='records')
+    
+    def similarity(self,sent1, sent2):
+        if (self.model == None):
+            self.load_USE_model(self.USE_MODEL)
+            
+        sent1_embedding = self.model([sent1])[0]
+        sent2_embedding = self.model([sent2])[0]
+        corr = np.inner(sent1_embedding,sent2_embedding)
+        return float(format(corr, '.2f'))
 
 
 CONVAI_HOME = os.environ.get("CONVAI_HOME")
 _inst = UtilsQnAFAQ(CONVAI_HOME)
 train = _inst.train_faq_kb
 ask = _inst.askfaq
+semantic_similar = _inst.similarity
 
 if __name__ == "__main__":
     print('load util')

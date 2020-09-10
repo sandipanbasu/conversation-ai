@@ -4,7 +4,7 @@ from typing import Optional
 import sys
 import os
 import time
-from utils_qna_kb import train, ask
+from utils_qna_kb import train, ask, semantic_similar
 
 from twilio.twiml.messaging_response import MessagingResponse
 
@@ -71,6 +71,12 @@ async def infer_faq(q: str,corr: Optional[float]=0.5, distance: Optional[int]=10
     else:
         return {"No answer found"}
     
+
+@app.get('/similar')
+async def similar(sent1: str,sent2: str, corr: Optional[float]=0.5):
+    corr = semantic_similar(sent1,sent2)
+    return {"corr" : corr}
+
 @app.post('/whatsapp')
 async def whatapp(Body: str = Form(...)):  
     # body = b''
